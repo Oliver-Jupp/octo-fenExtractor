@@ -1,6 +1,31 @@
 import os, sys, argparse
 import chess.pgn
 
+def getAllFen(game):
+    board = game.board()
+
+    listOfFen = []
+
+    for move in game.mainline_moves():
+        board.push(move)
+        listOfFen.append(board.fen())
+    
+    return listOfFen
+
+def retrieveAllGames(filePath):
+    listOfAllGames = []
+    
+    pgn = open(filePath)
+
+    game = chess.pgn.read_game(pgn)
+    while game != None:
+        counter += 1
+        listOfAllGames.append(chess.pgn.read_game(pgn))
+    
+    pgn.close()
+
+    return listOfAllGames
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser("Program description")
@@ -26,3 +51,12 @@ if __name__ == "__main__":
             print(f"Error: The output path '{args.output}' does not exist.")
             sys.exit(1)
 
+    games = retrieveAllGames(filePath)
+
+    listOfAllFen = []
+
+    for game in games:
+        listOfAllFen.extend(getAllFen(game))
+
+
+    print(listOfAllFen)
