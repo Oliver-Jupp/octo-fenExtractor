@@ -1,6 +1,8 @@
 import os, sys, argparse
 import chess.pgn
 
+import multiprocessing
+
 def getAllFen(game):
     board = game.board()
 
@@ -14,7 +16,7 @@ def getAllFen(game):
 
 def retrieveAllGames(filePath):
     listOfAllGames = []
-    
+
     pgn = open(filePath)
 
     game = chess.pgn.read_game(pgn)
@@ -57,11 +59,10 @@ if __name__ == "__main__":
 
     games = retrieveAllGames(filePath)
 
-    listOfAllFen = []
-
-    for game in games:
-        listOfAllFen.extend(getAllFen(game))
-
+    with multiprocessing.Pool() as pool:
+        listOfAllFen = pool.map(getAllFen, games)
+        
+    listOfAllFen = [fen for sublist in listOfAllFen for fen in sublist]
 
     saveFenToFile(listOfAllFen, outFile)
     print("Output written to:", outFile)
