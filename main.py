@@ -19,12 +19,16 @@ def retrieveAllGames(filePath):
 
     game = chess.pgn.read_game(pgn)
     while game != None:
-        counter += 1
         listOfAllGames.append(chess.pgn.read_game(pgn))
     
     pgn.close()
 
     return listOfAllGames
+
+def saveFenToFile(fenStrings, outFilePath):
+    with open(outFilePath, mode="w") as f:
+        for fen in fenStrings:
+            f.write(fen + "\n")
 
 if __name__ == "__main__":
 
@@ -59,4 +63,5 @@ if __name__ == "__main__":
         listOfAllFen.extend(getAllFen(game))
 
 
-    print(listOfAllFen)
+    saveFenToFile(listOfAllFen, outFile)
+    print("Output written to:", outFile)
