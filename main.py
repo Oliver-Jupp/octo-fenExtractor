@@ -6,13 +6,13 @@ import multiprocessing
 def getAllFen(game):
     board = game.board()
 
-    listOfFen = []
+    setOfFen = set()
 
     for move in game.mainline_moves():
         board.push(move)
-        listOfFen.append(board.fen())
-    
-    return listOfFen
+        setOfFen.add(board.fen())
+
+    return setOfFen
 
 def retrieveAllGames(filePath):
     listOfAllGames = []
@@ -60,9 +60,9 @@ if __name__ == "__main__":
     games = retrieveAllGames(filePath)
 
     with multiprocessing.Pool() as pool:
-        listOfAllFen = pool.map(getAllFen, games)
-        
-    listOfAllFen = [fen for sublist in listOfAllFen for fen in sublist]
+        setOfAllFen = pool.map(getAllFen, games)
 
-    saveFenToFile(listOfAllFen, outFile)
+    allFen = set().union(*setOfAllFen)
+
+    saveFenToFile(allFen, outFile)
     print("Output written to:", outFile)
